@@ -32,33 +32,38 @@ public class EmployeeManager {
         }
     }
 
-    // Task #4: Helper method to avoid code duplication for reading file
+    // Task #4 & #5: Helper method for reading file with proper exception handling
     private static String readEmployeeData() {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(FILE_NAME)))) {
-            content.append(reader.readLine());
+            String line = reader.readLine();
+            if (line != null) {
+                content.append(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: The file " + FILE_NAME + " was not found.");
         } catch (IOException e) {
-            System.out.println("Error reading file.");
+            System.out.println("Error: An I/O error occurred while reading the file.");
         }
         return content.toString();
     }
 
-    // Task #4: Helper method to avoid code duplication for writing file
+    // Task #4 & #5: Helper method for writing file with proper exception handling
     private static void writeEmployeeData(String data, boolean append) {
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter(FILE_NAME, append))) {
             writer.write(data);
         } catch (IOException e) {
-            System.out.println("Error writing file.");
+            System.out.println("Error: An I/O error occurred while writing to the file.");
         }
     }
 
     private static void loadAndPrintAllEmployees() {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             String[] employeeArray = fileData.split(",");
             for (String employee : employeeArray) {
                 System.out.println(employee.trim());
@@ -70,7 +75,7 @@ public class EmployeeManager {
     private static void loadAndPrintRandomEmployee() {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             String[] employeeArray = fileData.split(",");
             Random random = new Random();
             int randomIndex = random.nextInt(employeeArray.length);
@@ -81,24 +86,29 @@ public class EmployeeManager {
 
     private static void addEmployee(String operation) {
         System.out.println(MSG_LOADING);
-        String newEmployeeName = operation.substring(1);
-        writeEmployeeData(", " + newEmployeeName, true);
+        String newEmployeeName = operation.substring(1).trim();
+        if (!newEmployeeName.isEmpty()) {
+            writeEmployeeData(", " + newEmployeeName, true);
+        }
         System.out.println(MSG_LOADED);
     }
 
     private static void searchEmployee(String operation) {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             String[] employeeArray = fileData.split(",");
             boolean isFound = false;
-            String targetEmployee = operation.substring(1);
+            String targetEmployee = operation.substring(1).trim();
             for (String employee : employeeArray) {
                 if (employee.trim().equals(targetEmployee)) {
                     System.out.println("Employee found!");
                     isFound = true;
                     break;
                 }
+            }
+            if (!isFound) {
+                System.out.println("Employee not found.");
             }
         }
         System.out.println(MSG_LOADED);
@@ -107,7 +117,7 @@ public class EmployeeManager {
     private static void countCharactersAndWords() {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             char[] charArray = fileData.toCharArray();
             int wordCount = 0;
             boolean isInWord = false;
@@ -132,9 +142,9 @@ public class EmployeeManager {
     private static void updateEmployee(String operation) {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             String[] employeeArray = fileData.split(",");
-            String targetName = operation.substring(1);
+            String targetName = operation.substring(1).trim();
             for (int i = 0; i < employeeArray.length; i++) {
                 if (employeeArray[i].trim().equals(targetName)) {
                     employeeArray[i] = "Updated";
@@ -148,9 +158,9 @@ public class EmployeeManager {
     private static void deleteEmployee(String operation) {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
-        if (fileData != null && !fileData.isEmpty()) {
+        if (!fileData.isEmpty()) {
             String[] employeeArray = fileData.split(",");
-            String targetName = operation.substring(1);
+            String targetName = operation.substring(1).trim();
             List<String> employeeList = new ArrayList<>(Arrays.asList(employeeArray));
             employeeList.removeIf(emp -> emp.trim().equals(targetName));
             writeEmployeeData(String.join(",", employeeList), false);
