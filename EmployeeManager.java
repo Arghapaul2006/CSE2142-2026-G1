@@ -7,7 +7,7 @@ public class EmployeeManager {
     private static final String MSG_LOADED = "Data Loaded.";
 
     public static void main(String[] args) {
-        // Task #2: Application Terminates Early if Arguments are Missing
+        // Task #2 & #6: Validate arguments and handle invalid inputs gracefully
         if (args == null || args.length == 0) {
             System.out.println("Error: No arguments provided. Please pass valid arguments like l, s, +, ?, c, u, d.");
             return;
@@ -29,6 +29,8 @@ public class EmployeeManager {
             updateEmployee(operation);
         } else if (operation.contains("d")) {
             deleteEmployee(operation);
+        } else {
+            System.out.println("Error: Invalid operation argument provided.");
         }
     }
 
