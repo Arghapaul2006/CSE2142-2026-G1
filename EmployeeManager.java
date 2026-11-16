@@ -116,27 +116,21 @@ public class EmployeeManager {
         System.out.println(MSG_LOADED);
     }
 
+    // Task #7: Improved word and character counting logic with precise trimming
     private static void countCharactersAndWords() {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
         if (!fileData.isEmpty()) {
-            char[] charArray = fileData.toCharArray();
-            int wordCount = 0;
-            boolean isInWord = false;
-            for (char ch : charArray) {
-                if (ch == ' ') {
-                    if (!isInWord) {
-                        wordCount++;
-                        isInWord = true;
-                    } else {
-                        isInWord = false;
-                    }
-                }
+            String trimmedData = fileData.trim();
+            if (trimmedData.isEmpty()) {
+                System.out.println("0 word(s) found 0");
+            } else {
+                String[] words = trimmedData.split(",");
+                int charCount = trimmedData.length();
+                System.out.println(words.length + " word(s) found " + charCount);
             }
-            if (charArray.length > 0) {
-                wordCount++;
-            }
-            System.out.println(wordCount + " word(s) found " + charArray.length);
+        } else {
+            System.out.println("0 word(s) found 0");
         }
         System.out.println(MSG_LOADED);
     }
