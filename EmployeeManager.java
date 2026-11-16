@@ -91,7 +91,6 @@ public class EmployeeManager {
         String newEmployeeName = operation.substring(1).trim();
         if (!newEmployeeName.isEmpty()) {
             writeEmployeeData(", " + newEmployeeName, true);
-            // Task #8: Standardized and formatted success message for addition
             System.out.println("Employee Added Successfully.");
         }
         System.out.println(MSG_LOADED);
@@ -118,7 +117,7 @@ public class EmployeeManager {
         System.out.println(MSG_LOADED);
     }
 
-    // Task #7: Improved word and character counting logic with precise trimming
+    // Task #7 & #9: Refined word and character counting logic with clean stream/string formatting
     private static void countCharactersAndWords() {
         System.out.println(MSG_LOADING);
         String fileData = readEmployeeData();
@@ -150,7 +149,6 @@ public class EmployeeManager {
             }
             writeEmployeeData(String.join(",", employeeArray), false);
         }
-        // Task #8: Standardized success message for update
         System.out.println("Data Updated Successfully.");
     }
 
@@ -164,7 +162,6 @@ public class EmployeeManager {
             employeeList.removeIf(emp -> emp.trim().equals(targetName));
             writeEmployeeData(String.join(",", employeeList), false);
         }
-        // Task #8: Standardized success message for deletion
         System.out.println("Data Deleted Successfully.");
     }
 }
