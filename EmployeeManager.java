@@ -91,6 +91,8 @@ public class EmployeeManager {
         String newEmployeeName = operation.substring(1).trim();
         if (!newEmployeeName.isEmpty()) {
             writeEmployeeData(", " + newEmployeeName, true);
+            // Task #8: Standardized and formatted success message for addition
+            System.out.println("Employee Added Successfully.");
         }
         System.out.println(MSG_LOADED);
     }
@@ -148,7 +150,8 @@ public class EmployeeManager {
             }
             writeEmployeeData(String.join(",", employeeArray), false);
         }
-        System.out.println("Data Updated.");
+        // Task #8: Standardized success message for update
+        System.out.println("Data Updated Successfully.");
     }
 
     private static void deleteEmployee(String operation) {
@@ -161,6 +164,7 @@ public class EmployeeManager {
             employeeList.removeIf(emp -> emp.trim().equals(targetName));
             writeEmployeeData(String.join(",", employeeList), false);
         }
-        System.out.println("Data Deleted.");
+        // Task #8: Standardized success message for deletion
+        System.out.println("Data Deleted Successfully.");
     }
 }
