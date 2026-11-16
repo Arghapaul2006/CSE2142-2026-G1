@@ -15,122 +15,146 @@ public class EmployeeManager {
 
         String operation = args[0];
 
-        // Task #3: Using meaningful variable names instead of single letters
         if (operation.equals("l")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                String[] employeeArray = fileLine.split(",");
-                for (String employee : employeeArray) {
-                    System.out.println(employee);
-                }
-            } catch (Exception e) {}
-            System.out.println(MSG_LOADED);
+            loadAndPrintAllEmployees();
         } else if (operation.equals("s")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                System.out.println(fileLine);
-                String[] employeeArray = fileLine.split(",");
-                Random random = new Random();
-                int randomIndex = random.nextInt(employeeArray.length);
-                System.out.println(employeeArray[randomIndex]);
-            } catch (Exception e) {}
-            System.out.println(MSG_LOADED);
+            loadAndPrintRandomEmployee();
         } else if (operation.contains("+")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedWriter bufferedWriter = new BufferedWriter(
-                    new FileWriter(FILE_NAME, true));
-                String newEmployeeName = operation.substring(1);
-                bufferedWriter.write(", " + newEmployeeName);
-                bufferedWriter.close();
-            } catch (Exception e) {}
-            System.out.println(MSG_LOADED);
+            addEmployee(operation);
         } else if (operation.contains("?")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                String[] employeeArray = fileLine.split(",");
-                boolean isFound = false;
-                String targetEmployee = operation.substring(1);
-                for (int i = 0; i < employeeArray.length && !isFound; i++) {
-                    if (employeeArray[i].equals(targetEmployee)) {
-                        System.out.println("Employee found!");
-                        isFound = true;
-                    }
-                }
-            } catch (Exception e) {}
-            System.out.println(MSG_LOADED);
+            searchEmployee(operation);
         } else if (operation.contains("c")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                char[] charArray = fileLine.toCharArray();
-                boolean isInWord = false;
-                int wordCount = 0;
-                for (char ch : charArray) {
-                    if (ch == ' ') {
-                        if (!isInWord) {
-                            wordCount++;
-                            isInWord = true;
-                        } else {
-                            isInWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found " + charArray.length);
-            } catch (Exception e) {}
-            System.out.println(MSG_LOADED);
+            countCharactersAndWords();
         } else if (operation.contains("u")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                String[] employeeArray = fileLine.split(",");
-                String targetName = operation.substring(1);
-                for (int i = 0; i < employeeArray.length; i++) {
-                    if (employeeArray[i].equals(targetName)) {
-                        employeeArray[i] = "Updated";
+            updateEmployee(operation);
+        } else if (operation.contains("d")) {
+            deleteEmployee(operation);
+        }
+    }
+
+    // Task #4: Helper method to avoid code duplication for reading file
+    private static String readEmployeeData() {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(FILE_NAME)))) {
+            content.append(reader.readLine());
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+        }
+        return content.toString();
+    }
+
+    // Task #4: Helper method to avoid code duplication for writing file
+    private static void writeEmployeeData(String data, boolean append) {
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter(FILE_NAME, append))) {
+            writer.write(data);
+        } catch (IOException e) {
+            System.out.println("Error writing file.");
+        }
+    }
+
+    private static void loadAndPrintAllEmployees() {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            String[] employeeArray = fileData.split(",");
+            for (String employee : employeeArray) {
+                System.out.println(employee.trim());
+            }
+        }
+        System.out.println(MSG_LOADED);
+    }
+
+    private static void loadAndPrintRandomEmployee() {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            String[] employeeArray = fileData.split(",");
+            Random random = new Random();
+            int randomIndex = random.nextInt(employeeArray.length);
+            System.out.println(employeeArray[randomIndex].trim());
+        }
+        System.out.println(MSG_LOADED);
+    }
+
+    private static void addEmployee(String operation) {
+        System.out.println(MSG_LOADING);
+        String newEmployeeName = operation.substring(1);
+        writeEmployeeData(", " + newEmployeeName, true);
+        System.out.println(MSG_LOADED);
+    }
+
+    private static void searchEmployee(String operation) {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            String[] employeeArray = fileData.split(",");
+            boolean isFound = false;
+            String targetEmployee = operation.substring(1);
+            for (String employee : employeeArray) {
+                if (employee.trim().equals(targetEmployee)) {
+                    System.out.println("Employee found!");
+                    isFound = true;
+                    break;
+                }
+            }
+        }
+        System.out.println(MSG_LOADED);
+    }
+
+    private static void countCharactersAndWords() {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            char[] charArray = fileData.toCharArray();
+            int wordCount = 0;
+            boolean isInWord = false;
+            for (char ch : charArray) {
+                if (ch == ' ') {
+                    if (!isInWord) {
+                        wordCount++;
+                        isInWord = true;
+                    } else {
+                        isInWord = false;
                     }
                 }
-                BufferedWriter bufferedWriter = new BufferedWriter(
-                    new FileWriter(FILE_NAME));
-                bufferedWriter.write(String.join(",", employeeArray));
-                bufferedWriter.close();
-            } catch (Exception e) {}
-            System.out.println("Data Updated.");
-        } else if (operation.contains("d")) {
-            System.out.println(MSG_LOADING);
-            try {
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(FILE_NAME)));
-                String fileLine = bufferedReader.readLine();
-                String[] employeeArray = fileLine.split(",");
-                String targetName = operation.substring(1);
-                List<String> employeeList = new ArrayList<>(Arrays.asList(employeeArray));
-                employeeList.remove(targetName);
-                BufferedWriter bufferedWriter = new BufferedWriter(
-                    new FileWriter(FILE_NAME));
-                bufferedWriter.write(String.join(",", employeeList));
-                bufferedWriter.close();
-            } catch (Exception e) {}
-            System.out.println("Data Deleted.");
+            }
+            if (charArray.length > 0) {
+                wordCount++;
+            }
+            System.out.println(wordCount + " word(s) found " + charArray.length);
         }
+        System.out.println(MSG_LOADED);
+    }
+
+    private static void updateEmployee(String operation) {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            String[] employeeArray = fileData.split(",");
+            String targetName = operation.substring(1);
+            for (int i = 0; i < employeeArray.length; i++) {
+                if (employeeArray[i].trim().equals(targetName)) {
+                    employeeArray[i] = "Updated";
+                }
+            }
+            writeEmployeeData(String.join(",", employeeArray), false);
+        }
+        System.out.println("Data Updated.");
+    }
+
+    private static void deleteEmployee(String operation) {
+        System.out.println(MSG_LOADING);
+        String fileData = readEmployeeData();
+        if (fileData != null && !fileData.isEmpty()) {
+            String[] employeeArray = fileData.split(",");
+            String targetName = operation.substring(1);
+            List<String> employeeList = new ArrayList<>(Arrays.asList(employeeArray));
+            employeeList.removeIf(emp -> emp.trim().equals(targetName));
+            writeEmployeeData(String.join(",", employeeList), false);
+        }
+        System.out.println("Data Deleted.");
     }
 }
